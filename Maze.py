@@ -58,7 +58,9 @@ class Maze:
             self.actor_position[0][2])
         absolute_chaser = self.actor_position[0][2]
 
-        return relative_chaser
+        relative_maze_num = relative_chaser.index(absolute_chaser)
+
+        return relative_maze_num
         # return count
 
 
