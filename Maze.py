@@ -61,6 +61,9 @@ class Maze:
         relative_maze_num = relative_chaser.index(absolute_chaser)
         maze_x_half = self.maze_x % relative_maze_num
 
+        for i in range():
+            pass
+
         return maze_x_half
         # return count
 
