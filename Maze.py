@@ -26,9 +26,6 @@ class Maze:
 
     # 移動可能か
     def isCanMove(self, x, y):
-        x = int(x)
-        y = int(y)
-
         try:
             if x < 0 or y < 0:
                 return False
@@ -41,8 +38,10 @@ class Maze:
     # Actorを(0,0)とした時の迷路座標との変換
     def getConvertPosition(self, act_position):
         abs_position = []
-        for i in range(-2, 3):
-            for j in range(-2, 3):
+        for i in range(1 - int(self.maze_x/2) + 1, int(self.maze_x/2) + 1):
+            for j in range(1 - int(self.maze_y / 2) + 1, int(self.maze_y / 2) + 1):
+                # if i == 0 and j == 0:
+                #     abs_position.append([None, None])
                 if self.isCanMove(act_position[0] + j, act_position[1] + i):
                     abs_position.append(
                         [act_position[0] + j, act_position[1] + i]
@@ -54,7 +53,13 @@ class Maze:
     # 追跡者の探索範囲に逃げてるやつがいるか
     # いれば座標をいなければnoneを返却
     def searchTarget(self):
-        return
+        count = 0
+        relative_chaser = self.getConvertPosition(
+            self.actor_position[0][2])
+        absolute_chaser = self.actor_position[0][2]
+
+        return relative_chaser
+        # return count
 
 
 # 人
@@ -134,12 +139,11 @@ if __name__ == "__main__":
     maze = Maze(data)
 
     # print(maze.isCanMove(-2, -2))
-    user = Target(maze, 'target')
     chre = Chaser(maze, 'chaser')
+    user = Target(maze, 'target')
 
-    print(maze.getConvertPosition([1, 3]))
-
-    print(maze.getGet())
+    print(maze.actor_position)
+    print(maze.searchTarget())
 
     # user
     # print(user.position)
