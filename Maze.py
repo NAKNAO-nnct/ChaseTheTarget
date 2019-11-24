@@ -12,7 +12,7 @@ class Reward:
         self.reward = 0
 
     # 報酬を与える
-    def
+    # def
 
 
 # 迷路クラス
