@@ -3,6 +3,18 @@ import random
 import math
 
 
+# 報酬管理
+class Reward:
+    reward = None
+
+    # 初期化
+    def __init__(self):
+        self.reward = 0
+
+    # 報酬を与える
+    def
+
+
 # 迷路クラス
 class Maze:
     maze_data = []
@@ -215,7 +227,7 @@ if __name__ == "__main__":
     user = Target(maze, 'target')
 
     print(maze.actor_position)
-    print(maze.searchTarget(chre.position))
+    print(chre.searchTarget())
 
     # user
     # print(user.position)
