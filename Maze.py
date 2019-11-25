@@ -7,12 +7,25 @@ import math
 class Reward:
     reward = None
 
+    # 点数
+    reward_list = {
+        'end': 100,
+        'turn': -1,
+        'find': 5,
+        'lost': -10
+    }
+
     # 初期化
     def __init__(self):
         self.reward = 0
 
     # 報酬を与える
-    # def
+    def giveReward(self, key):
+        self.reward = self.reward + self.reward_list[key]
+
+    # 報酬を取得
+    def getReward(self):
+        return self.reward
 
 
 # 迷路クラス
@@ -43,6 +56,13 @@ class Maze:
     # 参加者セット
     def setActor(self, name, key, position):
         self.actor_position.append([name, key, position])
+
+    # 参加者の位置をセット
+    def setActorPosition(self, name, position):
+        for actor in self.actor_position:
+            if actor[0] == name:
+                actor[2] = position
+                # print(name, "場所", self.actor_position, position)
 
     # 移動可能か
     def isCanMove(self, p):
@@ -133,6 +153,40 @@ class Maze:
 
         return False
 
+    # 移動番号
+    def moveRelative(self, name, position_num):
+        for actor in self.actor_position:
+            if actor[0] == name:
+                position = actor[2]
+
+        '''
+            方向
+            5: 左
+            6: 右
+            7: 下
+            8: 上
+        '''
+        if position_num == 5:
+            return position - 1
+        elif position_num == 6:
+            return position + 1
+        elif position_num == 7:
+            return position + self.getInfoMaze()[1]
+        elif position_num == 8:
+            return position - self.getInfoMaze()[1]
+        return 0
+
+    # ゲームが終了状態かどうか
+    def isEnd(self):
+        chaser = self.actor_position[0][2]
+        target = self.actor_position[1][2]
+
+        print(chaser, target)
+
+        if chaser == target:
+            return True
+        return False
+
 
 # 人
 class Actor:
@@ -153,7 +207,7 @@ class Actor:
         while True:
             p = random.randrange(
                 int(len(self.maze_connector.getInfoMaze()[0])))
-            if self.maze_connector.isCanMove(p):
+            if self.moveTo(p):
                 break
         return p
 
@@ -162,6 +216,7 @@ class Actor:
         # 移動可能か
         if self.maze_connector.isCanMove(position):
             self.position = position
+            self.maze_connector.setActorPosition(self.name, position)
             return True
         return False
 
@@ -172,9 +227,21 @@ class Target(Actor):
     def __init__(self, maze_connector, name):
         super().__init__(maze_connector, name, 1)
 
+    # 逃げるやつの行動
+    def main(self):
+        while True:
+            p = random.randrange(5) + 5
+            position = self.maze_connector.moveRelative(self.name, p)
+            if position is not 0:
+                if self.moveTo(position):
+                    break
+
 
 # 追跡者
 class Chaser(Actor):
+    # 報酬
+    reward = Reward()
+
     # 見つけたflag
     flag = False
 
@@ -192,19 +259,51 @@ class Chaser(Actor):
 
     # 探索
     def searchTarget(self):
+        # ゲーム終了してるか
+        if self.maze_connector.isEnd():
+            self.reward.giveReward('end')
+
+        # 毎ターン
+        self.reward.giveReward('turn')
         search_result = self.maze_connector.searchTarget(self.position)
         if not search_result:
             # 見つからなかった時
             target_p = None
-            direction = 100
-            pass
+            direction = None
+            if self.getFlag():
+                # フラグをセット
+                self.setFlag(False)
+            # 見失った報酬
+            self.reward.giveReward('lost')
         else:
             # ターゲットの位置
             target_p = search_result[0]
             # ターゲットの方向
             direction = search_result[1]
+            if not self.getFlag():
+                # フラグセット
+                self.setFlag(True)
+            # 見つけた報酬
+            self.reward.giveReward('find')
 
         return target_p, direction
+
+    # メイン
+    def main(self):
+
+        p = self.searchTarget()
+        if p[0] is not None:
+            position = self.maze_connector.moveRelative(self.name, p)
+            if position is not 0:
+                if self.moveTo(position):
+                    return
+        else:
+            while True:
+                p = random.randrange(5) + 5
+                position = self.maze_connector.moveRelative(self.name, p)
+                if position is not 0:
+                    if self.moveTo(position):
+                        return
 
 
 if __name__ == "__main__":
@@ -220,14 +319,24 @@ if __name__ == "__main__":
         0, 0, 0, 0, 1, 0, 0, 1, 0, 1,
         0, 0, 0, 0, 1, 0, 0, 0, 0, 1
     ]
+
     maze = Maze(data, int(math.sqrt(len(data))))
 
     # print(maze.isCanMove(-2, -2))
     chre = Chaser(maze, 'chaser')
     user = Target(maze, 'target')
+    while True:
+        if not maze.isEnd():
+            print(maze.actor_position)
+            p = chre.searchTarget()
+            print(p)
+            user.main()
+            chre.main()
 
-    print(maze.actor_position)
-    print(chre.searchTarget())
+            print("報酬", chre.reward.getReward())
+            # input("")
+        else:
+            break
 
     # user
     # print(user.position)
