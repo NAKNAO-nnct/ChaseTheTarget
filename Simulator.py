@@ -1,7 +1,8 @@
-from Maze import *
 import math
+from Maze import *
 
 
+# シミュレータ
 class Simulator:
     maze = None
 
@@ -13,6 +14,12 @@ class Simulator:
     # 状態を取得
     def getState(self):
         pass
+
+    # 引数actionを実行する
+    def doAction(self, action):
+
+        pass
+
     pass
 
 
