@@ -132,4 +132,9 @@ Training
 Blog
 About
 
+
+# vscode
 .vscode/*
+
+# pyc
+*.pyc

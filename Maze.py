@@ -45,6 +45,10 @@ class Maze:
         # self.maze_y = maze_y
         self.actor_position = []
 
+    # 参加者と位置をセット
+    def setActors(self, actors):
+        self.actor_position = actors
+
     # 迷路情報を取得
     def getInfoMaze(self):
         return [self.maze_data, self.maze_x]
