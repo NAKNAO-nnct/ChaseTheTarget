@@ -122,6 +122,7 @@ if __name__ == "__main__":
 
                 q[s][i] = q[s][i] + r[i] + next_action - bid[s][i]
                 # print(q[s][i])
+
                 # print(q[s].index(max(q[s]))+5)
                 # for i in range(4):
             act_s = maze.moveRelative(
