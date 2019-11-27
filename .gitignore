@@ -134,7 +134,7 @@ About
 
 
 # vscode
-.vscode/*
+.vscode/
 
 # pyc
 *.pyc
